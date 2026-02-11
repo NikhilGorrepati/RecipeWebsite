@@ -9,7 +9,6 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as clean from "../clean.js";
 import type * as cooking from "../cooking.js";
 import type * as http from "../http.js";
 import type * as ingredients from "../ingredients.js";
@@ -26,7 +25,6 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  clean: typeof clean;
   cooking: typeof cooking;
   http: typeof http;
   ingredients: typeof ingredients;
