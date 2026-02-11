@@ -134,27 +134,7 @@ export function AuthForm() {
                     </div>
 
                     <div className="mt-8 border-t border-gray-100 pt-6 text-center">
-                        <p className="text-xs text-gray-400 mb-2">Having trouble?</p>
-                        <button
-                            onClick={() => {
-                                console.log("Clearing all Convex tokens...");
-                                // Clear all convex-related items from local storage
-                                const keysToRemove = [];
-                                for (let i = 0; i < localStorage.length; i++) {
-                                    const key = localStorage.key(i);
-                                    if (key && key.includes('convex')) {
-                                        keysToRemove.push(key);
-                                    }
-                                }
-                                keysToRemove.forEach(k => localStorage.removeItem(k));
-                                console.log("Tokens cleared. Reloading...");
-                                window.location.reload();
-                            }}
-                            type="button"
-                            className="text-xs text-red-500 hover:text-red-700 underline"
-                        >
-                            Reset App & Clear Data
-                        </button>
+                        <p className="text-xs text-gray-400">Having trouble? Contact support.</p>
                     </div>
                 </div>
             </div>

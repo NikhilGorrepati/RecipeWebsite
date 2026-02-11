@@ -149,7 +149,7 @@ export function PantryPage() {
                 </div>
                 <button
                     onClick={() => setIsAdding(!isAdding)}
-                    className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-6 py-3 font-medium text-primary transition-all hover:bg-gray-50 hover:border-accent/50 hover:text-accent shadow-sm"
+                    className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-primary transition-all hover:bg-gray-50 hover:border-accent/50 hover:text-accent shadow-sm sm:gap-2 sm:px-6 sm:py-3 sm:text-base"
                 >
                     {isAdding ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                     {isAdding ? 'Close' : 'Add Item'}
