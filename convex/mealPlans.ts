@@ -59,12 +59,21 @@ export const add = mutation({
     },
 });
 
-// Remove a meal plan
+// Remove a meal plan (ownership check)
 export const remove = mutation({
     args: {
         id: v.id("mealPlans"),
     },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Not authenticated");
+        }
+        const plan = await ctx.db.get(args.id);
+        if (!plan || plan.userId !== identity.subject) {
+            throw new Error("Not authorized");
+        }
+
         await ctx.db.delete(args.id);
     },
 });

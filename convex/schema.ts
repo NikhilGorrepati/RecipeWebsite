@@ -13,7 +13,10 @@ export default defineSchema({
             v.literal("tsp"),
             v.literal("tbsp")
         ),
-    }).index("by_name", ["name"]),
+        userId: v.string(),
+    })
+        .index("by_user", ["userId"])
+        .index("by_name", ["name"]),
 
     pantry: defineTable({
         ingredientId: v.id("ingredients"),

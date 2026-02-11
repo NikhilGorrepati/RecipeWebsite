@@ -35,7 +35,7 @@ export function IngredientsPage() {
             <div className="mb-12 flex items-end justify-between animate-slide-up">
                 <div>
                     <h1 className="font-serif text-5xl font-bold text-primary mb-2">Ingredients</h1>
-                    <p className="text-secondary font-light">Global database of items.</p>
+                    <p className="text-secondary font-light">Your personal ingredient list.</p>
                 </div>
                 <button
                     onClick={() => setIsAdding(!isAdding)}

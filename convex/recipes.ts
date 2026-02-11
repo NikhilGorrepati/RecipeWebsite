@@ -1,13 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
-// Get all recipes
-export const getAll = query({
-    handler: async (ctx) => {
-        return await ctx.db.query("recipes").collect();
-    },
-});
-
 // Get recipes for authenticated user (only main recipes)
 export const getForUser = query({
     args: {},
@@ -68,8 +61,13 @@ export const getById = query({
         id: v.id("recipes"),
     },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Not authenticated");
+        }
+
         const recipe = await ctx.db.get(args.id);
-        if (!recipe) return null;
+        if (!recipe || recipe.userId !== identity.subject) return null;
 
         // Fetch ingredient details for each ingredient in the recipe
         const ingredientsWithDetails = await Promise.all(
@@ -132,7 +130,7 @@ export const create = mutation({
     },
 });
 
-// Update an existing recipe
+// Update an existing recipe (ownership check)
 export const update = mutation({
     args: {
         id: v.id("recipes"),
@@ -149,17 +147,35 @@ export const update = mutation({
         ),
     },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Not authenticated");
+        }
+        const recipe = await ctx.db.get(args.id);
+        if (!recipe || recipe.userId !== identity.subject) {
+            throw new Error("Not authorized");
+        }
+
         const { id, ...updates } = args;
         await ctx.db.patch(id, updates);
     },
 });
 
-// Delete a recipe
+// Delete a recipe (ownership check)
 export const remove = mutation({
     args: {
         id: v.id("recipes"),
     },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Not authenticated");
+        }
+        const recipe = await ctx.db.get(args.id);
+        if (!recipe || recipe.userId !== identity.subject) {
+            throw new Error("Not authorized");
+        }
+
         await ctx.db.delete(args.id);
     },
 });

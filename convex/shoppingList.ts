@@ -70,12 +70,21 @@ export const add = mutation({
     },
 });
 
-// Remove item from shopping list
+// Remove item from shopping list (ownership check)
 export const remove = mutation({
     args: {
         id: v.id("shoppingList"),
     },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Not authenticated");
+        }
+        const item = await ctx.db.get(args.id);
+        if (!item || item.userId !== identity.subject) {
+            throw new Error("Not authorized");
+        }
+
         await ctx.db.delete(args.id);
     },
 });
