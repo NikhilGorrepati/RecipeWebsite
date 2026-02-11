@@ -110,7 +110,6 @@ export const create = mutation({
                 unit: v.string(),
             })
         ),
-        userId: v.string(),
         parentRecipeId: v.optional(v.id("recipes")),
     },
     handler: async (ctx, args) => {

@@ -2,7 +2,7 @@
 
 ## Active Development
 
-### 🚧 Phase 12: User Authentication System — IN PROGRESS (2026-02-10)
+### 🚧 Phase 12: User Authentication System — IN PROGRESS (2026-02-11)
 
 **Goal:** Implement user authentication with email/password login using Convex Auth, enabling data isolation between users.
 
@@ -22,6 +22,7 @@
   - Added logout button to header
   - Removed `userId` arguments from all frontend query/mutation calls
 - ✅ Cleaned up unused imports across all page components
+- ✅ Repository hygiene: refreshed `.gitignore` for Node/Vite/Convex outputs
 
 **Key Files Modified:**
 - **Backend:** `convex/auth.ts`, `convex/http.ts`, `convex/schema.ts`, `convex/recipes.ts`, `convex/pantry.ts`, `convex/shoppingList.ts`, `convex/mealPlans.ts`, `convex/cooking.ts`

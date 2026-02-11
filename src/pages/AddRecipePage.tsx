@@ -4,6 +4,13 @@ import { api } from '../../convex/_generated/api'
 import { ArrowLeft, Plus, Trash2, Save } from 'lucide-react'
 import type { Id } from '../../convex/_generated/dataModel'
 
+type RecipeIngredient = {
+    ingredientId: Id<"ingredients">
+    quantity: number
+    unit: string
+    ingredientName?: string
+}
+
 interface AddRecipePageProps {
     onNavigate: (page: string) => void
     recipeId?: Id<"recipes">
