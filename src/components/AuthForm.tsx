@@ -133,9 +133,7 @@ export function AuthForm() {
                         </button>
                     </div>
 
-                    <div className="mt-8 border-t border-gray-100 pt-6 text-center">
-                        <p className="text-xs text-gray-400">Having trouble? Contact support.</p>
-                    </div>
+
                 </div>
             </div>
         </div>
