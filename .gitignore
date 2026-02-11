@@ -19,6 +19,11 @@ dist-ssr/
 .env.*
 !.env.example
 
+# Keys
+generated_private_key.txt
+generated_jwks.txt
+jwt_key.txt
+
 # Local config
 *.local
 
