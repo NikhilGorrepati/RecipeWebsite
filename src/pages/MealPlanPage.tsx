@@ -56,6 +56,12 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
         setCurrentDate(newDate)
     }
 
+    const handleDateJump = (dateStr: string) => {
+        if (!dateStr) return
+        const newDate = new Date(dateStr)
+        setCurrentDate(newDate)
+    }
+
     const openAddModal = (date: string, type: string) => {
         setSelectedSlot({ date, type })
         setIsModalOpen(true)
@@ -93,23 +99,34 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
             <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end justify-between animate-slide-up">
                 <div>
                     <h1 className="font-serif text-5xl font-bold text-primary mb-2">Weekly Menu</h1>
-                    <div className="flex items-center gap-4 text-secondary">
-                        <button
-                            onClick={handlePrevWeek}
-                            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 hover:text-accent transition-all shadow-sm"
-                        >
-                            <ChevronLeft className="h-5 w-5" />
-                        </button>
-                        <span className="font-mono text-lg tracking-wider flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
-                            {start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()} — {end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()}
-                        </span>
-                        <button
-                            onClick={handleNextWeek}
-                            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 hover:text-accent transition-all shadow-sm"
-                        >
-                            <ChevronRight className="h-5 w-5" />
-                        </button>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4 text-secondary">
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={handlePrevWeek}
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 hover:text-accent transition-all shadow-sm"
+                            >
+                                <ChevronLeft className="h-5 w-5" />
+                            </button>
+                            <span className="font-mono text-lg tracking-wider flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                {start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()} — {end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()}
+                            </span>
+                            <button
+                                onClick={handleNextWeek}
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 hover:text-accent transition-all shadow-sm"
+                            >
+                                <ChevronRight className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-medium uppercase tracking-wider text-gray-400">Jump to:</span>
+                            <input
+                                type="date"
+                                value={currentDate.toISOString().split('T')[0]}
+                                onChange={(e) => handleDateJump(e.target.value)}
+                                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-all hover:border-accent/50 cursor-pointer"
+                            />
+                        </div>
                     </div>
                 </div>
                 <button
