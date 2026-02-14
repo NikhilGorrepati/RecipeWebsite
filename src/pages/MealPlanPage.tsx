@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../convex/_generated/api'
-import { ChevronLeft, ChevronRight, Plus, Search, X, Loader2, Utensils, Calendar } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, Search, X, Loader2, Utensils } from 'lucide-react'
 import type { Id } from '../../convex/_generated/dataModel'
+import { DatePicker } from '../components/DatePicker'
 
 interface MealPlanPageProps {
     onNavigate: (page: string, recipeId?: Id<"recipes">) => void
@@ -11,23 +12,26 @@ interface MealPlanPageProps {
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner']
 
 export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
-    const [currentDate, setCurrentDate] = useState(new Date())
+    const [startDate, setStartDate] = useState(() => {
+        // Default to next Sunday or today if it's Sunday
+        const today = new Date()
+        const dayOfWeek = today.getDay()
+        const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek
+        const nextSunday = new Date(today)
+        nextSunday.setDate(today.getDate() + daysUntilSunday)
+        nextSunday.setHours(0, 0, 0, 0)
+        return nextSunday
+    })
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedSlot, setSelectedSlot] = useState<{ date: string, type: string } | null>(null)
     const [searchTerm, setSearchTerm] = useState('')
 
-    // Helper to get start/end of week
-    const getWeekRange = (date: Date) => {
-        const start = new Date(date)
-        start.setDate(date.getDate() - date.getDay() + 1) // Start on Monday
-        const end = new Date(start)
-        end.setDate(start.getDate() + 6) // End on Sunday
-        return { start, end }
-    }
-
-    const { start, end } = getWeekRange(currentDate)
-    const startDateStr = start.toISOString().split('T')[0]
-    const endDateStr = end.toISOString().split('T')[0]
+    // Calculate 7-day range from start date
+    const endDate = new Date(startDate)
+    endDate.setDate(startDate.getDate() + 6)
+    
+    const startDateStr = startDate.toISOString().split('T')[0]
+    const endDateStr = endDate.toISOString().split('T')[0]
 
     // Fetch meal plans for the week
     const mealPlans = useQuery(api.mealPlans.getWeek, {
@@ -42,21 +46,15 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
 
     const addMeal = useMutation(api.mealPlans.add)
     const removeMeal = useMutation(api.mealPlans.remove)
-    const generateList = useMutation(api.shoppingList.generateFromPlan)
-
-    const handlePrevWeek = () => {
-        const newDate = new Date(currentDate)
+    const generateList = useMutatstartDate)
         newDate.setDate(newDate.getDate() - 7)
-        setCurrentDate(newDate)
+        setStartDate(newDate)
     }
 
     const handleNextWeek = () => {
-        const newDate = new Date(currentDate)
+        const newDate = new Date(startDate)
         newDate.setDate(newDate.getDate() + 7)
-        setCurrentDate(newDate)
-    }
-
-    const handleDateJump = (dateStr: string) => {
+        setStarateJump = (dateStr: string) => {
         if (!dateStr) return
         const newDate = new Date(dateStr)
         setCurrentDate(newDate)
@@ -92,10 +90,10 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
         d.setDate(start.getDate() + i)
         return d.toISOString().split('T')[0]
     })
-
-    return (
-        <div className="mx-auto max-w-7xl px-4 py-8 pb-32">
-            {/* Header */}
+7 days starting from startDate
+    const weekDays = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(startDate)
+        d.setDate(startDate*/}
             <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end justify-between animate-slide-up">
                 <div>
                     <h1 className="font-serif text-5xl font-bold text-primary mb-2">Weekly Menu</h1>
@@ -104,12 +102,17 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
                             <button
                                 onClick={handlePrevWeek}
                                 className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 hover:text-accent transition-all shadow-sm"
+                            >7-Day Menu</h1>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4 text-secondary">
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={handlePrevWeek}
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 hover:text-accent transition-all shadow-sm"
                             >
                                 <ChevronLeft className="h-5 w-5" />
                             </button>
-                            <span className="font-mono text-lg tracking-wider flex items-center gap-2">
-                                <Calendar className="h-4 w-4" />
-                                {start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()} — {end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()}
+                            <span className="font-mono text-lg tracking-wider">
+                                {startDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()} — {endDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()}
                             </span>
                             <button
                                 onClick={handleNextWeek}
@@ -119,19 +122,8 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
                             </button>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-xs font-medium uppercase tracking-wider text-gray-400">Jump to:</span>
-                            <input
-                                type="date"
-                                value={currentDate.toISOString().split('T')[0]}
-                                onChange={(e) => handleDateJump(e.target.value)}
-                                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-all hover:border-accent/50 cursor-pointer"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <button
-                    onClick={async () => {
-                        if (confirm('Generate shopping list from this week\'s meals? This will add missing ingredients to your list.')) {
+                            <span className="text-xs font-medium uppercase tracking-wider text-gray-400">Start Date:</span>
+                            <DatePicker value={startDate} onChange={setStartDate}(confirm('Generate shopping list from this week\'s meals? This will add missing ingredients to your list.')) {
                             await generateList({
                                 startDate: startDateStr,
                                 endDate: endDateStr,
