@@ -46,7 +46,10 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
 
     const addMeal = useMutation(api.mealPlans.add)
     const removeMeal = useMutation(api.mealPlans.remove)
-    const generateList = useMutatstartDate)
+    const generateList = useMutation(api.shoppingList.generateFromPlan)
+
+    const handlePrevWeek = () => {
+        const newDate = new Date(startDate)
         newDate.setDate(newDate.getDate() - 7)
         setStartDate(newDate)
     }
@@ -54,10 +57,7 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
     const handleNextWeek = () => {
         const newDate = new Date(startDate)
         newDate.setDate(newDate.getDate() + 7)
-        setStarateJump = (dateStr: string) => {
-        if (!dateStr) return
-        const newDate = new Date(dateStr)
-        setCurrentDate(newDate)
+        setStartDate(newDate)
     }
 
     const openAddModal = (date: string, type: string) => {
@@ -84,25 +84,19 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
         }
     }
 
-    // Generate array of days for the week
-    const weekDays = Array.from({ length: 7 }, (_, i) => {
-        const d = new Date(start)
-        d.setDate(start.getDate() + i)
-        return d.toISOString().split('T')[0]
-    })
-7 days starting from startDate
+    // Generate array of 7 days starting from startDate
     const weekDays = Array.from({ length: 7 }, (_, i) => {
         const d = new Date(startDate)
-        d.setDate(startDate*/}
+        d.setDate(startDate.getDate() + i)
+        return d.toISOString().split('T')[0]
+    })
+
+    return (
+        <div className="mx-auto max-w-7xl px-4 py-8 pb-32">
+            {/* Header */}
             <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end justify-between animate-slide-up">
                 <div>
-                    <h1 className="font-serif text-5xl font-bold text-primary mb-2">Weekly Menu</h1>
-                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4 text-secondary">
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={handlePrevWeek}
-                                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 hover:text-accent transition-all shadow-sm"
-                            >7-Day Menu</h1>
+                    <h1 className="font-serif text-5xl font-bold text-primary mb-2">7-Day Menu</h1>
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4 text-secondary">
                         <div className="flex items-center gap-4">
                             <button
@@ -123,7 +117,13 @@ export function MealPlanPage({ onNavigate }: MealPlanPageProps) {
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-xs font-medium uppercase tracking-wider text-gray-400">Start Date:</span>
-                            <DatePicker value={startDate} onChange={setStartDate}(confirm('Generate shopping list from this week\'s meals? This will add missing ingredients to your list.')) {
+                            <DatePicker value={startDate} onChange={setStartDate} />
+                        </div>
+                    </div>
+                </div>
+                <button
+                    onClick={async () => {
+                        if (confirm('Generate shopping list from this week\'s meals? This will add missing ingredients to your list.')) {
                             await generateList({
                                 startDate: startDateStr,
                                 endDate: endDateStr,
