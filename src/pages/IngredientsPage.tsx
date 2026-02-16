@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useMutation, useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { Plus, Trash2, X, Database, Loader2 } from 'lucide-react'
+import type { Id } from '../../convex/_generated/dataModel'
 
 const UNIT_OPTIONS = ['grams', 'ml', 'count', 'tsp', 'tbsp'] as const
 
@@ -24,7 +25,7 @@ export function IngredientsPage() {
         setIsAdding(false)
     }
 
-    const handleDelete = async (id: any) => {
+    const handleDelete = async (id: Id<"ingredients">) => {
         if (confirm('Are you sure you want to delete this ingredient?')) {
             await removeIngredient({ id })
         }

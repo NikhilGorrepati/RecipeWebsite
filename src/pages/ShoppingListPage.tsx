@@ -1,13 +1,14 @@
 import { useMutation, useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { ShoppingCart, Check, Trash2, Lightbulb, Loader2 } from 'lucide-react'
+import type { Id } from '../../convex/_generated/dataModel'
 
 export function ShoppingListPage() {
     const shoppingList = useQuery(api.shoppingList.getForUser, {})
     const removeItem = useMutation(api.shoppingList.remove)
     const clearAll = useMutation(api.shoppingList.clear)
 
-    const handleRemove = async (id: any) => {
+    const handleRemove = async (id: Id<"shoppingList">) => {
         await removeItem({ id })
     }
 

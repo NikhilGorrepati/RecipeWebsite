@@ -4,12 +4,22 @@ import { api } from '../../convex/_generated/api'
 import { ArrowLeft, ChefHat, Clock, Trash2, Edit2, Check, ExternalLink, Calendar, FileText, Minus, Plus, RefreshCw, X } from 'lucide-react'
 import type { Id } from '../../convex/_generated/dataModel'
 
-interface RecipeDetailPageProps {
-    recipeId: Id<"recipes">
-    onNavigate: (page: string, recipeId?: Id<"recipes">, extra?: any) => void
+// Navigation extra data type for passing data between pages
+interface NavigationExtra {
+    sourceRecipeId?: Id<"recipes">;
+    sourceRecipeName?: string;
+    isVariation?: boolean;
 }
 
-function VariationsList({ parentId, currentId, onNavigate }: { parentId: Id<"recipes">, currentId: Id<"recipes">, onNavigate: any }) {
+// Navigation function type
+type NavigateFunction = (page: string, recipeId?: Id<"recipes">, extra?: NavigationExtra) => void
+
+interface RecipeDetailPageProps {
+    recipeId: Id<"recipes">
+    onNavigate: NavigateFunction
+}
+
+function VariationsList({ parentId, currentId, onNavigate }: { parentId: Id<"recipes">, currentId: Id<"recipes">, onNavigate: NavigateFunction }) {
     const variations = useQuery(api.recipes.getVariations, { parentId })
     const parent = useQuery(api.recipes.getById, { id: parentId })
 
@@ -60,18 +70,17 @@ export function RecipeDetailPage({ recipeId, onNavigate }: RecipeDetailPageProps
     const [isCookingMode, setIsCookingMode] = useState(false)
     const [elapsedTime, setElapsedTime] = useState(0) // in seconds
     const timerRef = useRef<number | null>(null)
+    const wakeLockRef = useRef<WakeLockSentinel | null>(null)
 
     // Use selected servings or default to recipe servings
     const displayServings = selectedServings ?? recipe?.servings ?? 2
 
     // Timer Logic & Wake Lock
     useEffect(() => {
-        let wakeLock: any = null
-
         const requestWakeLock = async () => {
             try {
                 if ('wakeLock' in navigator) {
-                    wakeLock = await (navigator as any).wakeLock.request('screen')
+                    wakeLockRef.current = await navigator.wakeLock.request('screen')
                 }
             } catch (err) {
                 console.error(`${err} - Wake Lock failed`)
@@ -92,9 +101,9 @@ export function RecipeDetailPage({ recipeId, onNavigate }: RecipeDetailPageProps
                 clearInterval(timerRef.current)
             }
             // Release Wake Lock
-            if (wakeLock) {
-                wakeLock.release()
-                wakeLock = null
+            if (wakeLockRef.current) {
+                void wakeLockRef.current.release()
+                wakeLockRef.current = null
             }
         }
 
@@ -103,8 +112,8 @@ export function RecipeDetailPage({ recipeId, onNavigate }: RecipeDetailPageProps
             if (timerRef.current) {
                 clearInterval(timerRef.current)
             }
-            if (wakeLock) {
-                wakeLock.release()
+            if (wakeLockRef.current) {
+                void wakeLockRef.current.release()
             }
         }
     }, [isCookingMode])

@@ -15,18 +15,16 @@ export function AuthForm() {
         e.preventDefault()
         setError('')
         setIsLoading(true)
-        console.log("Attempting sign in...", { isSignUp, email })
 
         try {
-            const result = await signIn('password', {
+            await signIn('password', {
                 email,
                 password,
                 flow: isSignUp ? 'signUp' : 'signIn',
             })
-            console.log("Sign in result:", result)
-        } catch (err: any) {
-            console.error("Sign in failed:", err)
-            setError(err.message || 'Authentication failed. Please try again.')
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Authentication failed. Please try again.'
+            setError(errorMessage)
         } finally {
             setIsLoading(false)
         }

@@ -12,10 +12,17 @@ import { MealPlanPage } from './pages/MealPlanPage'
 import { ThemeProvider } from './ThemeContext'
 import { ThemeSwitcher } from './components/ThemeSwitcher'
 import { AuthForm } from './components/AuthForm'
-import { BookOpen, Calendar, Carrot, ChefHat, Package, ShoppingCart, LogOut } from 'lucide-react'
+import { BookOpen, Calendar, Carrot, ChefHat, Package, ShoppingCart, LogOut, type LucideIcon } from 'lucide-react'
 import type { Id } from '../convex/_generated/dataModel'
 import { useUser } from './UserContext'
 import { useAuthActions } from '@convex-dev/auth/react'
+
+// Navigation extra data type for passing data between pages
+interface NavigationExtra {
+    sourceRecipeId?: Id<"recipes">;
+    sourceRecipeName?: string;
+    isVariation?: boolean;
+}
 
 type Page = 'home' | 'ingredients' | 'pantry' | 'recipes' | 'add-recipe' | 'edit-recipe' | 'recipe-detail' | 'shopping-list' | 'meal-plan'
 
@@ -24,12 +31,12 @@ function AppContent() {
   const { signOut } = useAuthActions()
   const [currentPage, setCurrentPage] = useState<Page>('home')
   const [selectedRecipeId, setSelectedRecipeId] = useState<Id<"recipes"> | undefined>()
-  const [navigationExtra, setNavigationExtra] = useState<any>(null)
+  const [navigationExtra, setNavigationExtra] = useState<NavigationExtra | null>(null)
 
-  const handleNavigate = (page: string, recipeId?: Id<"recipes">, extra?: any) => {
+  const handleNavigate = (page: string, recipeId?: Id<"recipes">, extra?: NavigationExtra) => {
     setCurrentPage(page as Page)
     setSelectedRecipeId(recipeId)
-    setNavigationExtra(extra)
+    setNavigationExtra(extra ?? null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -51,7 +58,7 @@ function AppContent() {
   }
 
   // Floating Dock Navigation Item
-  const NavItem = ({ page, label, icon: Icon }: { page: Page, label: string, icon: any }) => {
+  const NavItem = ({ page, label, icon: Icon }: { page: Page, label: string, icon: LucideIcon }) => {
     const isActive = currentPage === page
     return (
       <button

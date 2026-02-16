@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
-import { useUser } from '../UserContext'
 import { Plus, Minus, Edit2, Loader2, Package, X } from 'lucide-react'
 import type { Id } from '../../convex/_generated/dataModel'
 
@@ -15,12 +14,11 @@ interface PantryItemProps {
             defaultUnit: string
         } | null
     }
-    userId: string
-    setPantry: any
-    adjustPantry: any
+    setPantry: ReturnType<typeof useMutation<typeof api.pantry.set>>
+    adjustPantry: ReturnType<typeof useMutation<typeof api.pantry.adjust>>
 }
 
-function PantryItem({ item, userId, setPantry, adjustPantry }: PantryItemProps) {
+function PantryItem({ item, setPantry, adjustPantry }: PantryItemProps) {
     const [isEditing, setIsEditing] = useState(false)
     const [editValue, setEditValue] = useState(item.quantity.toString())
 
@@ -28,7 +26,6 @@ function PantryItem({ item, userId, setPantry, adjustPantry }: PantryItemProps) 
         const newQuantity = parseFloat(editValue)
         if (!isNaN(newQuantity) && newQuantity >= 0) {
             await setPantry({
-                userId,
                 ingredientId: item.ingredientId,
                 quantity: newQuantity,
             })
@@ -47,7 +44,6 @@ function PantryItem({ item, userId, setPantry, adjustPantry }: PantryItemProps) 
 
     const handleAdjust = async (delta: number) => {
         await adjustPantry({
-            userId,
             ingredientId: item.ingredientId,
             delta,
         })
@@ -111,7 +107,6 @@ function PantryItem({ item, userId, setPantry, adjustPantry }: PantryItemProps) 
 
 
 export function PantryPage() {
-    const { currentUser } = useUser()
     const pantryItems = useQuery(api.pantry.getForUser, {})
     const allIngredients = useQuery(api.ingredients.getAll)
     const setPantry = useMutation(api.pantry.set)
@@ -228,7 +223,6 @@ export function PantryPage() {
                             <PantryItem
                                 key={item._id}
                                 item={item}
-                                userId={currentUser}
                                 setPantry={setPantry}
                                 adjustPantry={adjustPantry}
                             />

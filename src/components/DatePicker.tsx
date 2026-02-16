@@ -105,6 +105,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
                         <button
                             onClick={handlePrevMonth}
+                            aria-label="Previous month"
                             className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-accent/10 text-primary hover:text-accent transition-all"
                         >
                             <ChevronLeft className="h-4 w-4" />
@@ -114,6 +115,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
                         </span>
                         <button
                             onClick={handleNextMonth}
+                            aria-label="Next month"
                             className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-accent/10 text-primary hover:text-accent transition-all"
                         >
                             <ChevronRight className="h-4 w-4" />

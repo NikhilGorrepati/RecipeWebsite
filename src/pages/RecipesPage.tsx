@@ -8,7 +8,20 @@ interface RecipesPageProps {
     onNavigate: (page: string, recipeId?: Id<"recipes">) => void
 }
 
-function RecipeCard({ recipe, onNavigate, index }: { recipe: any, onNavigate: any, index: number }) {
+// Recipe type from Convex query
+interface Recipe {
+    _id: Id<"recipes">;
+    title: string;
+    description?: string;
+    servings: number;
+    ingredients: Array<{
+        ingredientId: Id<"ingredients">;
+        quantity: number;
+        unit: string;
+    }>;
+}
+
+function RecipeCard({ recipe, onNavigate, index }: { recipe: Recipe, onNavigate: RecipesPageProps['onNavigate'], index: number }) {
     const variations = useQuery(api.recipes.getVariations, { parentId: recipe._id })
     const variationCount = variations ? variations.length : 0
 

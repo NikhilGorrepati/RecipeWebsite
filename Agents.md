@@ -227,6 +227,83 @@ Can add ingredients to master list, add to pantry, and adjust quantities.
 
 ---
 
+## Agent Guidelines
+
+### Build, Lint, and Test Commands
+
+```bash
+# Development
+bun run dev              # Start dev server
+bun run build            # Production build
+bun run preview          # Preview production build
+
+# Code Quality
+bun run lint             # Run ESLint
+
+# Testing
+bun run test             # Run tests in watch mode
+bun run test:run         # Run tests once (CI)
+bun run test:ui          # Run with UI
+bun run test:coverage    # Generate coverage report
+bun run test -- <file>   # Run single test file
+bun run test -- -t "pattern"  # Run tests matching pattern
+
+# Convex
+bun convex dev           # Start Convex dev server
+bun convex deploy        # Deploy to production
+```
+
+### Code Style Guidelines
+
+**TypeScript:** ES2022 target, strict mode, no unused locals/parameters
+
+**Imports:** Group by category - React/Vite → Convex → Libraries → Local
+```typescript
+import { useState } from 'react'
+import { useQuery } from 'convex/react'
+import { ChefHat } from 'lucide-react'
+import { useTheme } from './ThemeContext'
+import type { Id } from '../../convex/_generated/dataModel'
+```
+
+**Naming:**
+- Components: PascalCase (AuthForm.tsx)
+- Hooks/Utils: camelCase (useTheme, scaleQuantity)
+- Types: PascalCase (ThemeContextType)
+- Convex: camelCase exports (getAll, create)
+
+**Components:** Function declarations with props interface
+```typescript
+interface ButtonProps {
+  label: string
+  onClick: () => void
+}
+
+export function Button({ label, onClick }: ButtonProps) {
+  return <button onClick={onClick}>{label}</button>
+}
+```
+
+**Error Handling:** Check auth first in Convex, throw descriptive errors, use try-catch in components
+
+**Type Safety:** No `any` types, use `Id<"table">`, strict null checks
+
+**Convex Pattern:** Auth check → Ownership check → Business logic
+
+**Styling:** Tailwind CSS, CSS variables for themes, Lucide icons (no emojis)
+
+**Testing:** Use describe/it blocks, mock dependencies, test success + error cases, cleanup after each test
+
+### Critical Rules
+- Never commit secrets (.env.local is gitignored)
+- Don't modify convex/_generated/
+- Always run lint before committing
+- Write tests for new functionality
+- Check authentication in all Convex functions
+- Use TypeScript strict mode
+
+---
+
 ## Future Roadmap (Backlog)
 
 - [ ] **Data Visualization:** Charts for ingredient usage over time.

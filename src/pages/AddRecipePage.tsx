@@ -14,7 +14,14 @@ type RecipeIngredient = {
 interface AddRecipePageProps {
     onNavigate: (page: string) => void
     recipeId?: Id<"recipes">
-    extra?: { sourceRecipeId?: Id<"recipes">, isVariation?: boolean }
+    extra?: NavigationExtra | null
+}
+
+// Navigation extra data type for passing data between pages
+interface NavigationExtra {
+    sourceRecipeId?: Id<"recipes">;
+    sourceRecipeName?: string;
+    isVariation?: boolean;
 }
 
 export function AddRecipePage({ onNavigate, recipeId, extra }: AddRecipePageProps) {
